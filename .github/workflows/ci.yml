@@ -1,0 +1,64 @@
+name: MiniSSD checks
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - name: Configure
+        run: cmake -S . -B build-ci -DCMAKE_BUILD_TYPE=Release
+      - name: Build
+        run: cmake --build build-ci --config Release --parallel 2
+      - name: Tests
+        run: ctest --test-dir build-ci -C Release --output-on-failure
+      - name: Validation and benchmark reports
+        run: |
+          executable=./build-ci/minissd
+          if [ -f ./build-ci/Release/minissd.exe ]; then executable=./build-ci/Release/minissd.exe;
+          elif [ -f ./build-ci/minissd.exe ]; then executable=./build-ci/minissd.exe; fi
+          "$executable" validate --seed 20261010 --operations 20000 --report reports/validation.json
+          "$executable" benchmark --seed 20261010 --writes 5000 --report reports/benchmark.json
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: results-${{ matrix.os }}
+          path: |
+            reports/*.json
+            build-ci/Testing/Temporary/LastTest.log
+          if-no-files-found: warn
+          retention-days: 14
+
+  sanitizers:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - name: Configure
+        run: cmake -S . -B build-sanitized -DCMAKE_BUILD_TYPE=Debug -DMINISSD_SANITIZERS=ON
+      - name: Build
+        run: cmake --build build-sanitized --parallel 2
+      - name: Tests with ASan and UBSan
+        env:
+          ASAN_OPTIONS: detect_leaks=1
+          UBSAN_OPTIONS: halt_on_error=1
+        run: ctest --test-dir build-sanitized --output-on-failure
