@@ -1,5 +1,7 @@
 # MiniSSD
 
+[![MiniSSD checks](https://github.com/s932345/MiniSSD/actions/workflows/ci.yml/badge.svg)](https://github.com/s932345/MiniSSD/actions/workflows/ci.yml)
+
 C++20 in-memory SSD storage simulator and validation tool.
 
 MiniSSD models NAND constraints and implements a page-mapped Flash Translation Layer (FTL), out-of-place updates, greedy garbage collection, Trim, and fault injection. Reproducible workloads verify logical data and report write amplification. Benchmarks measure this RAM simulator, not physical SSD performance.
@@ -94,7 +96,8 @@ ctest --test-dir build-sanitized --output-on-failure
 
 詳細紀錄見 [驗證結果](docs/verification.md)；保留的原始結果見 [validation.json](docs/results/validation.json) 與 [benchmark.json](docs/results/benchmark.json)。
 
-GitHub Actions 已配置 Windows／Linux CMake 和 Linux ASan／UBSan；遠端執行結果尚待確認，目前不宣稱 Linux、MSVC 或 sanitizer 已通過。
+GitHub Actions 已實際通過 Windows／Linux CMake 建置與測試，以及 Linux ASan／UBSan 測試。
+Windows／Linux 工作另執行完整驗證及 Benchmark，並保存 JSON 與 CTest 紀錄。見 [CI 執行結果](https://github.com/s932345/MiniSSD/actions/runs/38125315237)。
 
 ## 模型與量測範圍
 

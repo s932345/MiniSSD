@@ -41,7 +41,20 @@
 吞吐量涵蓋 payload 生成及 oracle 更新，延遲涵蓋 FTL 呼叫、結果檢查與計時成本。
 原始 JSON 保存在 [benchmark.json](results/benchmark.json)，WAF 公式與分位數順序已另行核對。
 
-## 尚未驗證的部分
+## GitHub Actions 遠端驗證
 
-GitHub Actions 已配置，尚未發布 Repo 或執行遠端 CI。
-Linux、MSVC、ASan／UBSan 尚未實測。模型沒有持久化、掉電恢復、並行 I/O 或真實硬體介面。
+2026-10-11 已發布 [MiniSSD](https://github.com/s932345/MiniSSD)。
+原始碼提交 `5d19a7f7b403bf5a3417ed8334b04f10f8ed0c4d` 的 [CI 執行](https://github.com/s932345/MiniSSD/actions/runs/38125315237) 成功：
+
+| 工作 | 結果 | 驗證內容 |
+|---|---|---|
+| Windows Release | success | CMake 建置、6 項 CTest、20,000 次 CLI 操作、兩組 Benchmark |
+| Linux Release | success | CMake 建置、6 項 CTest、20,000 次 CLI 操作、兩組 Benchmark |
+| Linux ASan／UBSan | success | Debug 建置及 6 項 CTest，含資料驗證與 Benchmark |
+
+Windows／Linux 的 JSON 報告與 CTest 紀錄已保存為該次執行的 artifacts，保留 14 天。
+`docs/results/` 的數據仍是先前本機量測，與遠端執行產生的報告分別保存。
+
+## 未涵蓋的範圍
+
+模型沒有持久化、掉電恢復、並行 I/O 或真實硬體介面。

@@ -82,5 +82,5 @@ MVP 優先選擇可檢查的行為與清楚的錯誤路徑。
 ## 範圍
 
 本機已驗證 Windows g++ 與 CMake/Ninja。
-GitHub Actions 已配置 Windows／Linux 和 Linux sanitizer，但尚未執行遠端 CI。
+GitHub Actions 的 Windows／Linux CMake 建置與測試，以及 Linux ASan／UBSan 均已通過，見 [CI 執行結果](https://github.com/s932345/MiniSSD/actions/runs/38125315237)。
 本模型沒有持久化、掉電恢復、ECC、壞塊、真實 NAND／NVMe 命令或硬體存取。
